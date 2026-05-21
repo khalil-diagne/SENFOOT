@@ -42,7 +42,7 @@ function landing_article_image_url(?string $image): string
         return '';
     }
 
-    if (preg_match('~^https?://~i', $image) || str_starts_with($image, '/')) {
+    if (preg_match('~^https?://~i', $image) || strpos($image, '/') === 0) {
         return $image;
     }
 
@@ -87,12 +87,17 @@ function landing_price($price): string
         }
 
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-        html { scroll-behavior: smooth; }
+        html {
+            scroll-behavior: smooth;
+            overflow-y: auto;
+        }
         body {
             background: var(--black);
             font-family: 'Syne', sans-serif;
             color: #ddeeff;
             overflow-x: hidden;
+            overflow-y: auto;
+            min-height: 100vh;
             line-height: 1.6;
         }
         body::before {
@@ -101,7 +106,7 @@ function landing_price($price): string
             inset: 0;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
             pointer-events: none;
-            z-index: 1;
+            z-index: 0;
             opacity: .45;
         }
 
@@ -909,8 +914,14 @@ function landing_price($price): string
             padding: 24px;
             background: rgba(2, 8, 17, .74);
             backdrop-filter: blur(14px);
+            pointer-events: none;
+            visibility: hidden;
         }
-        .modal.open { display: flex; }
+        .modal.open {
+            display: flex;
+            pointer-events: auto;
+            visibility: visible;
+        }
         .modal-content {
             width: min(560px, 100%);
             max-height: 88vh;
@@ -946,8 +957,19 @@ function landing_price($price): string
             font-size: 15px;
         }
 
-        .reveal { opacity: 0; transform: translateY(28px); transition: opacity .7s ease, transform .7s ease; }
-        .reveal.visible { opacity: 1; transform: translateY(0); }
+        .reveal {
+            opacity: 1;
+            transform: translateY(0);
+            transition: opacity .7s ease, transform .7s ease;
+        }
+        html.js .reveal:not(.visible) {
+            opacity: 0;
+            transform: translateY(28px);
+        }
+        html.js .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
 
         @media (max-width: 1100px) {
             .hero-card { display: none; }
@@ -1320,6 +1342,8 @@ function landing_price($price): string
     <?php endif; ?>
 
     <script>
+        document.documentElement.classList.add('js');
+
         function animateCounter(el, target, suffix, duration) {
             let start = 0;
             const step = target / (duration / 16);
@@ -1339,12 +1363,27 @@ function landing_price($price): string
             animateCounter(document.getElementById('counter3'), 5, ' min', 1200);
         }, 500);
 
-        const observer = new IntersectionObserver(entries => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) entry.target.classList.add('visible');
+        const revealElements = document.querySelectorAll('.reveal');
+        if ('IntersectionObserver' in window) {
+            const observer = new IntersectionObserver(entries => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+
+            revealElements.forEach(el => {
+                const rect = el.getBoundingClientRect();
+                if (rect.top < window.innerHeight && rect.bottom > 0) {
+                    el.classList.add('visible');
+                }
+                observer.observe(el);
             });
-        }, { threshold: .1 });
-        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+        } else {
+            revealElements.forEach(el => el.classList.add('visible'));
+        }
 
         document.querySelectorAll('.fav-btn:not([data-article-id])').forEach(btn => {
             btn.addEventListener('click', () => {
@@ -1366,23 +1405,29 @@ function landing_price($price): string
         const navLinks = document.getElementById('navLinks');
         const navAuth = document.getElementById('navAuth');
 
-        mobileToggle.addEventListener('click', () => {
-            navLinks.classList.toggle('active');
-            navAuth.classList.toggle('active');
-            const icon = mobileToggle.querySelector('i');
-            icon.classList.toggle('fa-bars');
-            icon.classList.toggle('fa-times');
-        });
-
-        document.querySelectorAll('.nav-links a, .nav-auth a').forEach(link => {
-            link.addEventListener('click', () => {
-                navLinks.classList.remove('active');
-                navAuth.classList.remove('active');
+        if (mobileToggle && navLinks && navAuth) {
+            mobileToggle.addEventListener('click', () => {
+                navLinks.classList.toggle('active');
+                navAuth.classList.toggle('active');
                 const icon = mobileToggle.querySelector('i');
-                icon.classList.add('fa-bars');
-                icon.classList.remove('fa-times');
+                if (icon) {
+                    icon.classList.toggle('fa-bars');
+                    icon.classList.toggle('fa-times');
+                }
             });
-        });
+
+            document.querySelectorAll('.nav-links a, .nav-auth a').forEach(link => {
+                link.addEventListener('click', () => {
+                    navLinks.classList.remove('active');
+                    navAuth.classList.remove('active');
+                    const icon = mobileToggle.querySelector('i');
+                    if (icon) {
+                        icon.classList.add('fa-bars');
+                        icon.classList.remove('fa-times');
+                    }
+                });
+            });
+        }
 
         <?php if ($isLogged): ?>
         function toggleWishlist(articleId, button) {

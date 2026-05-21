@@ -11,10 +11,14 @@
     align-items: center;
     padding: 24px;
     animation: backdropFade 0.28s ease;
+    pointer-events: none;
+    visibility: hidden;
 }
 
 .article-modal.open {
     display: flex;
+    pointer-events: auto;
+    visibility: visible;
 }
 
 @keyframes backdropFade {

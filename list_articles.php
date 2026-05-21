@@ -64,6 +64,7 @@ $platforms = array_values($platforms);
             color: #fff;
             min-height: 100vh;
             overflow-x: hidden;
+            overflow-y: auto;
         }
 
         .bg-grid {
@@ -550,10 +551,14 @@ $platforms = array_values($platforms);
             z-index: 200;
             justify-content: center;
             align-items: center;
+            pointer-events: none;
+            visibility: hidden;
         }
 
         .modal.open {
             display: flex;
+            pointer-events: auto;
+            visibility: visible;
         }
 
         .modal-content {
@@ -852,7 +857,7 @@ $platforms = array_values($platforms);
         </div>
     </div>
 
-    <script src="js/article_lightbox.js"></script>
+    <script src="style/article_lightbox.js"></script>
     <script>
         (function () {
             const container = document.getElementById('particles');
