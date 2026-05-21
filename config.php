@@ -271,7 +271,7 @@ function redirect(string $to): never
 function require_login(): void
 {
     if (empty($_SESSION["logged"]) || $_SESSION["logged"] !== true) {
-        redirect("/index.php");
+        redirect("/connexion.php");
     }
 }
 

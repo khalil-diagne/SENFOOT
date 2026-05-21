@@ -154,95 +154,73 @@ $platforms = array_values($platforms);
             to { transform: translateY(-100px) translateX(var(--drift)); opacity: 0; }
         }
 
+        /* ══ NAVBAR ══ */
         nav {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            min-height: var(--nav-h);
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            justify-content: space-between;
-            gap: 16px;
-            padding: max(10px, var(--safe-top)) calc(max(18px, var(--safe-right))) 10px calc(max(18px, var(--safe-left)));
-            background: rgba(2, 8, 17, 0.85);
+            position: fixed; top: 0; left: 0; right: 0;
+            height: var(--nav-h);
+            display: flex; align-items: center; justify-content: space-between;
+            gap: 18px;
+            padding: max(10px, var(--safe-top)) calc(max(18px, var(--safe-right))) 0 calc(max(18px, var(--safe-left)));
+            background: rgba(2,8,17,0.85);
             backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(0, 207, 255, 0.15);
+            border-bottom: 1px solid rgba(0,207,255,0.15);
             z-index: 100;
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 4px 30px rgba(0,0,0,0.5);
         }
-
         nav::after {
             content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 1px;
+            position: absolute; bottom: 0; left: 0; right: 0; height: 1px;
             background: linear-gradient(90deg, transparent, var(--neon-green), var(--neon-blue), transparent);
             animation: scanH 4s ease-in-out infinite;
         }
-
         @keyframes scanH {
-            0%, 100% { opacity: 0.4; }
-            50% { opacity: 1; }
+            0%,100%{opacity:0.4;} 50%{opacity:1;}
         }
 
-        .nav-logo {
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 900;
-            font-size: 17px;
-            letter-spacing: 2px;
-            background: linear-gradient(90deg, var(--neon-green), var(--neon-blue));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+        .logo-wrap {
+            display: flex; align-items: center; gap: 12px;
             text-decoration: none;
+            min-width: 0;
+            flex: 1 1 auto;
+        }
+        .logo-img {
+            width: 42px; height: 42px; border-radius: 50%;
+            border: 2px solid var(--neon-green);
+            box-shadow: var(--glow-green);
+            object-fit: cover;
+        }
+        .logo-text {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900; font-size: 16px; letter-spacing: 2px;
+            background: linear-gradient(90deg, var(--neon-green), var(--neon-blue));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            min-width: 0;
         }
 
+        .nav-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: flex-end; min-width: 0; }
+
         .nav-btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            padding: 10px 18px;
+            display: flex; align-items: center; gap: 6px;
+            padding: 8px 16px;
             background: transparent;
-            border: 1px solid rgba(0, 207, 255, 0.25);
+            border: 1px solid rgba(0,207,255,0.25);
             border-radius: 8px;
             color: #e0f7ff;
             font-family: 'Rajdhani', sans-serif;
-            font-size: 13px;
-            letter-spacing: 1px;
-            cursor: pointer;
-            text-decoration: none;
-            transition: all 0.3s;
-            position: relative;
-            overflow: hidden;
+            font-size: 13px; letter-spacing: 1px;
+            cursor: pointer; text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative; overflow: hidden;
         }
-
-        .nav-btn:hover {
-            border-color: var(--neon-blue);
-            box-shadow: var(--glow-blue);
-            transform: translateY(-2px);
-        }
+        .nav-btn:hover { border-color: var(--neon-blue); box-shadow: var(--glow-blue); transform: translateY(-2px); }
 
         .cart-count {
-            background: var(--neon-green);
-            color: #001a0d;
-            border-radius: 50%;
-            width: 18px;
-            height: 18px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 10px;
-            font-weight: 700;
-            font-family: 'Orbitron', sans-serif;
+            background: var(--neon-green); color: #001a0d;
+            border-radius: 50%; width: 18px; height: 18px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 10px; font-weight: 700; font-family: 'Orbitron', sans-serif;
         }
 
         .page-wrap {
@@ -467,38 +445,11 @@ $platforms = array_values($platforms);
             border-color: rgba(255, 93, 115, 0.28);
         }
 
-        .favorite-btn {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            border: 1px solid rgba(255,255,255,0.18);
-            background: rgba(2, 8, 17, 0.72);
-            color: #fff;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .favorite-btn:hover {
-            transform: scale(1.05);
-            border-color: #ff5d73;
-            box-shadow: 0 0 18px rgba(255, 93, 115, 0.28);
-        }
-
-        .favorite-btn.is-active {
-            color: #ff5d73;
-            border-color: rgba(255, 93, 115, 0.46);
-            background: rgba(255, 93, 115, 0.14);
-        }
-
         .article-image {
             width: 100%;
             height: 180px;
             object-fit: cover;
-            display: block;
-            transition: transform 0.4s ease;
+            transition: transform 0.5s;
         }
 
         .article-card:hover .article-image {
@@ -574,25 +525,6 @@ $platforms = array_values($platforms);
             box-shadow: 0 4px 20px rgba(0, 255, 136, 0.25);
         }
 
-        .btn-buy::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -60%;
-            width: 40%;
-            height: 200%;
-            background: rgba(255, 255, 255, 0.25);
-            transform: skewX(-20deg);
-            animation: btnShine 3s ease-in-out infinite;
-        }
-
-        @keyframes btnShine {
-            0% { left: -60%; opacity: 0; }
-            20% { opacity: 1; }
-            50% { left: 130%; opacity: 0; }
-            100% { left: 130%; opacity: 0; }
-        }
-
         .btn-buy:hover,
         .cta-button:hover {
             transform: translateY(-3px);
@@ -607,78 +539,6 @@ $platforms = array_values($platforms);
             color: rgba(255,255,255,0.44);
             box-shadow: none;
             cursor: not-allowed;
-        }
-
-        .btn-buy:active,
-        .cta-button:active {
-            transform: scale(0.97);
-        }
-
-        .no-results {
-            display: none;
-            text-align: center;
-            padding: 56px 24px;
-            border: 1px dashed rgba(0, 207, 255, 0.22);
-            border-radius: 18px;
-            color: rgba(255, 255, 255, 0.6);
-            background: rgba(0, 20, 40, 0.45);
-            margin-bottom: 40px;
-        }
-
-        .no-results.open {
-            display: block;
-        }
-
-        .no-results strong {
-            display: block;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 15px;
-            letter-spacing: 1.4px;
-            color: var(--neon-blue);
-            margin-bottom: 10px;
-        }
-
-        .back-wrap {
-            text-align: center;
-            margin-top: 40px;
-        }
-
-        .btn-back {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 13px 36px;
-            background: transparent;
-            border: 1px solid rgba(0, 207, 255, 0.25);
-            border-radius: 50px;
-            color: var(--neon-blue);
-            font-family: 'Orbitron', sans-serif;
-            font-size: 12px;
-            letter-spacing: 2px;
-            text-decoration: none;
-            transition: all 0.3s;
-        }
-
-        .btn-back:hover {
-            border-color: var(--neon-blue);
-            box-shadow: var(--glow-blue);
-            transform: translateY(-3px);
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 80px 20px;
-            color: rgba(255, 255, 255, 0.35);
-            font-family: 'Orbitron', sans-serif;
-            font-size: 13px;
-            letter-spacing: 2px;
-        }
-
-        .empty-state span {
-            font-size: 48px;
-            display: block;
-            margin-bottom: 16px;
-            opacity: 0.4;
         }
 
         .modal {
@@ -711,30 +571,6 @@ $platforms = array_values($platforms);
         @keyframes modalIn {
             from { opacity: 0; transform: scale(0.88) translateY(20px); }
             to { opacity: 1; transform: scale(1) translateY(0); }
-        }
-
-        .modal-content::before,
-        .modal-content::after {
-            content: '';
-            position: absolute;
-            width: 35px;
-            height: 35px;
-            border-color: var(--neon-green);
-            border-style: solid;
-        }
-
-        .modal-content::before {
-            top: -1px;
-            left: -1px;
-            border-width: 2px 0 0 2px;
-            border-radius: 20px 0 0 0;
-        }
-
-        .modal-content::after {
-            bottom: -1px;
-            right: -1px;
-            border-width: 0 2px 2px 0;
-            border-radius: 0 0 20px 0;
         }
 
         .modal-content h2 {
@@ -820,12 +656,6 @@ $platforms = array_values($platforms);
             box-shadow: 0 6px 28px rgba(0, 255, 136, 0.3);
         }
 
-        .cta-button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
-
         .notif {
             position: fixed;
             right: 20px;
@@ -843,49 +673,9 @@ $platforms = array_values($platforms);
             animation: notifIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        .notif[data-type="warning"] {
-            border-color: rgba(255, 186, 0, 0.4);
-            background: linear-gradient(135deg, rgba(255, 186, 0, 0.18), rgba(255, 120, 0, 0.15));
-        }
-
-        .notif[data-type="error"] {
-            border-color: rgba(255, 80, 110, 0.45);
-            background: linear-gradient(135deg, rgba(255, 70, 100, 0.2), rgba(255, 120, 120, 0.15));
-        }
-
-        .notif-title {
-            display: block;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 11px;
-            letter-spacing: 1.3px;
-            text-transform: uppercase;
-            margin-bottom: 6px;
-        }
-
-        .notif-text {
-            display: block;
-            line-height: 1.45;
-            font-size: 13px;
-        }
-
         @keyframes notifIn {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
-        }
-
-        @media (max-width: 900px) {
-            nav {
-                padding-right: calc(max(18px, var(--safe-right)));
-                padding-left: calc(max(18px, var(--safe-left)));
-            }
-
-            .page-wrap {
-                padding: calc(var(--nav-h) + 36px) 18px 64px;
-            }
-
-            .toolbar {
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-            }
         }
 
         @media (max-width: 768px) {
@@ -896,110 +686,22 @@ $platforms = array_values($platforms);
                 flex-wrap: wrap;
             }
 
-            .nav-logo {
+            .logo-text {
                 font-size: 15px;
                 letter-spacing: 1.5px;
             }
 
-            .nav-btn {
+            .nav-actions {
                 width: 100%;
+                justify-content: center;
             }
 
             .page-wrap {
-                padding-top: 124px;
-            }
-
-            .page-subtitle {
-                margin-bottom: 28px;
-                font-size: 13px;
-                letter-spacing: 1.4px;
+                padding-top: 140px;
             }
 
             .toolbar {
                 grid-template-columns: 1fr;
-                padding: 14px;
-                gap: 12px;
-            }
-
-            .results-bar {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .articles-grid {
-                grid-template-columns: 1fr;
-                gap: 18px;
-            }
-
-            .article-image,
-            .no-img-placeholder {
-                height: 210px;
-            }
-
-            .modal {
-                align-items: flex-end;
-            }
-
-            .modal-content {
-                width: 100%;
-                max-width: none;
-                max-height: 85vh;
-                overflow-y: auto;
-                border-radius: 22px 22px 0 0;
-                padding: 24px 18px 20px;
-            }
-
-            .cta-button {
-                padding: 15px 18px;
-                font-size: 12px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            nav {
-                padding-right: calc(max(12px, var(--safe-right)));
-                padding-left: calc(max(12px, var(--safe-left)));
-            }
-
-            .nav-logo {
-                font-size: 14px;
-                letter-spacing: 1.2px;
-            }
-
-            .page-wrap {
-                padding-top: calc(var(--nav-h) + 90px);
-                padding-left: 14px;
-                padding-right: 14px;
-            }
-
-            nav {
-                justify-content: center;
-                gap: 10px;
-            }
-
-            .page-title {
-                letter-spacing: 2px;
-            }
-
-            .article-body {
-                padding: 16px;
-            }
-
-            .article-title {
-                font-size: 12px;
-                letter-spacing: 1px;
-            }
-
-            .article-price {
-                font-size: 18px;
-            }
-
-            .notif {
-                left: 14px;
-                right: 14px;
-                top: auto;
-                bottom: 14px;
-                min-width: 0;
             }
         }
     </style>
@@ -1013,14 +715,19 @@ $platforms = array_values($platforms);
     <div class="scanlines"></div>
 
     <nav>
-        <a href="accueil.php" class="nav-logo">Dribbleur Store</a>
-        <a class="nav-btn" href="wishlist.php">Favoris</a>
-        <a class="nav-btn" href="conditions.php">Conditions</a>
-        <button class="nav-btn" type="button" onclick="openCart()">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6h15l-1.5 9h-12L4 2H2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            Panier
-            <span class="cart-count" id="cartCount">0</span>
-        </button>
+        <a href="accueil.php" class="logo-wrap">
+            <img src="img/logo.jpg" class="logo-img" alt="Logo">
+            <span class="logo-text">Dribbleur Store</span>
+        </a>
+        <div class="nav-actions">
+            <a class="nav-btn" href="wishlist.php">Favoris</a>
+            <a class="nav-btn" href="conditions.php">Conditions</a>
+            <button class="nav-btn" type="button" onclick="openCart()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6h15l-1.5 9h-12L4 2H2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Panier
+                <span class="cart-count" id="cartCount">0</span>
+            </button>
+        </div>
     </nav>
 
     <div class="page-wrap">
@@ -1033,7 +740,7 @@ $platforms = array_values($platforms);
 
         <?php if (empty($rows)): ?>
             <div class="empty-state">
-                <span>📦</span>
+                <span style="font-size:48px;display:block;margin-bottom:16px;opacity:0.4;">📦</span>
                 Aucun article publie pour le moment.
             </div>
         <?php else: ?>
@@ -1069,15 +776,6 @@ $platforms = array_values($platforms);
                         <option value="sold">Vendu</option>
                     </select>
                 </div>
-                <div class="toolbar-field">
-                    <label class="toolbar-label" for="sortSelect">Trier par</label>
-                    <select class="toolbar-select" id="sortSelect">
-                        <option value="recent">Plus recents</option>
-                        <option value="price-asc">Prix croissant</option>
-                        <option value="price-desc">Prix decroissant</option>
-                        <option value="title-asc">Titre A-Z</option>
-                    </select>
-                </div>
             </section>
 
             <div class="results-bar">
@@ -1087,20 +785,25 @@ $platforms = array_values($platforms);
 
             <div class="articles-grid" id="articlesGrid">
                 <?php foreach ($rows as $i => $r): ?>
-                    <?php $statusMeta = article_status_meta($r['product_status'] ?? null); ?>
+                    <?php 
+                    $status = $r['product_status'] ?? 'available';
+                    $statusLabel = 'Disponible';
+                    $statusClass = 'status-available';
+                    if ($status === 'reserved') { $statusLabel = 'Reserve'; $statusClass = 'status-reserved'; }
+                    elseif ($status === 'sold') { $statusLabel = 'Vendu'; $statusClass = 'status-sold'; }
+                    ?>
                     <article
                         class="article-card"
                         data-title="<?= htmlspecialchars(mb_strtolower((string) $r['title'])) ?>"
                         data-platform="<?= htmlspecialchars(mb_strtolower((string) ($r['platform'] ?? ''))) ?>"
                         data-price="<?= htmlspecialchars((string) ((float) ($r['price'] ?? 0))) ?>"
-                        data-status="<?= htmlspecialchars($statusMeta['value']) ?>"
-                        data-created="<?= htmlspecialchars((string) strtotime((string) ($r['created_at'] ?? 'now'))) ?>"
+                        data-status="<?= htmlspecialchars($status) ?>"
                         style="animation-delay:<?= $i * 0.07 ?>s; cursor: pointer;"
                         onclick="articleLightbox.open(<?= htmlspecialchars(json_encode($r['id'])) ?>)">
-                        <div class="article-img-wrap" style="cursor: pointer;">
+                        <div class="article-img-wrap">
                             <div class="article-top-actions">
-                                <span class="status-badge <?= htmlspecialchars($statusMeta['class']) ?>"><?= htmlspecialchars($statusMeta['label']) ?></span>
-                                <button class="favorite-btn<?= in_array((int) $r['id'], $wishlistIds, true) ? ' is-active' : '' ?>" type="button" data-article-id="<?= (int) $r['id'] ?>" onclick="event.stopPropagation(); toggleWishlist(<?= (int) $r['id'] ?>, this)" aria-label="Ajouter aux favoris">♥</button>
+                                <span class="status-badge <?= $statusClass ?>"><?= $statusLabel ?></span>
+                                <button class="favorite-btn<?= in_array((int) $r['id'], $wishlistIds, true) ? ' is-active' : '' ?>" type="button" data-article-id="<?= (int) $r['id'] ?>" onclick="event.stopPropagation(); toggleWishlist(<?= (int) $r['id'] ?>, this)" aria-label="Ajouter aux favoris" style="background:rgba(0,0,0,0.3);border:none;color:#fff;border-radius:50%;width:30px;height:30px;cursor:pointer;">♥</button>
                             </div>
                             <?php if (!empty($r['image'])): ?>
                                 <img class="article-image" src="uploads/articles/<?= htmlspecialchars($r['image']) ?>" alt="<?= htmlspecialchars($r['title']) ?>">
@@ -1111,24 +814,23 @@ $platforms = array_values($platforms);
                         <div class="article-body">
                             <h3 class="article-title"><?= htmlspecialchars($r['title']) ?></h3>
                             <div class="article-meta">Publie par BEST DRIBBLEUR SN</div>
-                            <div class="article-stock-copy">Statut actuel: <?= htmlspecialchars($statusMeta['label']) ?></div>
+                            <div class="article-stock-copy">Statut actuel: <?= $statusLabel ?></div>
                             <div class="article-price"><?= htmlspecialchars(number_format((float) $r['price'], 0, ',', ' ')) ?> FCFA</div>
-                            <button class="btn-buy<?= $statusMeta['value'] !== 'available' ? ' is-disabled' : '' ?>" type="button" onclick="event.stopPropagation(); articleLightbox.open(<?= htmlspecialchars(json_encode($r['id'])) ?>)">
-                                <?= $statusMeta['value'] === 'available' ? 'Acheter maintenant' : 'Voir le detail' ?>
+                            <button class="btn-buy<?= $status !== 'available' ? ' is-disabled' : '' ?>" type="button" onclick="event.stopPropagation(); articleLightbox.open(<?= htmlspecialchars(json_encode($r['id'])) ?>)">
+                                <?= $status === 'available' ? 'Acheter maintenant' : 'Voir le detail' ?>
                             </button>
                         </div>
                     </article>
                 <?php endforeach; ?>
             </div>
 
-            <div class="no-results" id="noResults">
+            <div class="no-results" id="noResults" style="display:none;text-align:center;padding:40px;color:rgba(255,255,255,0.5);">
                 <strong>Aucun article ne correspond aux filtres</strong>
-                Essaie une autre plateforme, un autre prix ou efface la recherche.
             </div>
         <?php endif; ?>
 
-        <div class="back-wrap">
-            <a href="accueil.php" class="btn-back">Retour a l accueil</a>
+        <div style="text-align:center;margin-top:40px;">
+            <a href="accueil.php" style="display:inline-flex;align-items:center;gap:8px;padding:13px 36px;background:transparent;border:1px solid rgba(0,207,255,0.25);border-radius:50px;color:var(--neon-blue);font-family:'Orbitron',sans-serif;font-size:12px;letter-spacing:2px;text-decoration:none;transition:all 0.3s;">Retour a l accueil</a>
         </div>
     </div>
 
@@ -1138,63 +840,50 @@ $platforms = array_values($platforms);
             <h2>Votre Panier</h2>
             <div id="cartItems"></div>
             <?php if ($isCheckoutProfileComplete): ?>
-                <label class="cart-label" for="payerPhoneNumber">Votre numero WhatsApp (9 chiffres, ex: 775072936)</label>
-                <input class="cart-phone-input" type="tel" id="payerPhoneNumber" placeholder="77 507 29 36" maxlength="12" inputmode="numeric">
-                <button class="cta-button" type="button" onclick="checkout()">Enregistrer la commande et contacter par WhatsApp</button>
+                <label class="cart-label" for="payerPhoneNumber">Votre numero WhatsApp (9 chiffres)</label>
+                <input class="cart-phone-input" type="tel" id="payerPhoneNumber" placeholder="77 507 29 36" maxlength="12">
+                <button class="cta-button" type="button" onclick="checkout()">Commander via WhatsApp</button>
             <?php else: ?>
                 <div class="cart-label" style="margin-top:18px;line-height:1.6;">
                     Completez d abord votre profil client avant toute commande.
-                    Champs manquants : <?= htmlspecialchars(implode(', ', array_values($profileMissingFields))) ?>
                 </div>
-                <a class="cta-button" href="profile_edit.php?checkout_required=1" style="display:inline-flex;justify-content:center;align-items:center;text-decoration:none;margin-top:16px;">Completer mes informations personnelles</a>
+                <a class="cta-button" href="profile_edit.php?checkout_required=1" style="display:inline-flex;justify-content:center;align-items:center;text-decoration:none;margin-top:16px;">Completer mon profil</a>
             <?php endif; ?>
         </div>
     </div>
 
+    <script src="js/article_lightbox.js"></script>
     <script>
         (function () {
             const container = document.getElementById('particles');
-            for (let i = 0; i < 45; i += 1) {
-                const particle = document.createElement('div');
-                particle.className = 'particle';
-                const green = Math.random() > 0.5;
-                particle.style.cssText = `left:${Math.random() * 100}%;animation-duration:${5 + Math.random() * 10}s;animation-delay:${Math.random() * 10}s;--drift:${(Math.random() - 0.5) * 120}px;background:${green ? '#00ff88' : '#00cfff'};box-shadow:0 0 6px ${green ? '#00ff88' : '#00cfff'};width:${1 + Math.random() * 2}px;height:${1 + Math.random() * 2}px;`;
-                container.appendChild(particle);
+            if (container) {
+                for (let i = 0; i < 45; i += 1) {
+                    const particle = document.createElement('div');
+                    particle.className = 'particle';
+                    const green = Math.random() > 0.5;
+                    particle.style.cssText = `left:${Math.random() * 100}%;animation-duration:${5 + Math.random() * 10}s;animation-delay:${Math.random() * 10}s;--drift:${(Math.random() - 0.5) * 120}px;background:${green ? '#00ff88' : '#00cfff'};box-shadow:0 0 6px ${green ? '#00ff88' : '#00cfff'};width:${1 + Math.random() * 2}px;height:${1 + Math.random() * 2}px;`;
+                    container.appendChild(particle);
+                }
             }
         })();
 
         let cart = JSON.parse(localStorage.getItem('efootball_cart') || '[]');
 
-        function syncCart() {
-            cart = JSON.parse(localStorage.getItem('efootball_cart') || '[]');
-            return cart;
-        }
-
         function updateCart() {
             localStorage.setItem('efootball_cart', JSON.stringify(cart));
             const count = document.getElementById('cartCount');
-            if (count) {
-                count.textContent = cart.length;
-            }
+            if (count) count.textContent = cart.length;
         }
 
-        function notify(message, type = 'success', title = 'Information') {
+        function notify(message, type = 'success') {
             const notification = document.createElement('div');
             notification.className = 'notif';
-            notification.dataset.type = type;
-            notification.innerHTML = '<span class="notif-title"></span><span class="notif-text"></span>';
-            notification.querySelector('.notif-title').textContent = title;
-            notification.querySelector('.notif-text').textContent = message;
+            notification.textContent = message;
             document.body.appendChild(notification);
             setTimeout(() => {
-                notification.style.transition = 'opacity 0.35s';
                 notification.style.opacity = '0';
-            }, 2400);
-            setTimeout(() => notification.remove(), 2800);
-        }
-
-        function showNotification(message) {
-            notify(message, 'success', 'Information');
+                setTimeout(() => notification.remove(), 500);
+            }, 2500);
         }
 
         function toggleWishlist(articleId, button) {
@@ -1203,50 +892,31 @@ $platforms = array_values($platforms);
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ article_id: articleId })
             })
-                .then(response => response.json())
-                .then(data => {
-                    if (!data.success) {
-                        notify(data.message || 'Impossible de modifier les favoris.', 'warning', 'Favoris');
-                        return;
-                    }
-
-                    if (button) {
-                        button.classList.toggle('is-active', !!data.is_favorite);
-                    }
-
-                    notify(data.message || 'Liste d envies mise a jour.', 'success', 'Favoris');
-                })
-                .catch(() => {
-                    notify('Une erreur technique est survenue.', 'error', 'Favoris');
-                });
-        }
-
-        function formatPrice(price) {
-            return Number(price || 0).toLocaleString('fr-FR') + ' FCFA';
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    button.classList.toggle('is-active');
+                    notify(data.message);
+                }
+            });
         }
 
         function openCart() {
-            syncCart();
             const modal = document.getElementById('cartModal');
             const cartItems = document.getElementById('cartItems');
-            if (!modal || !cartItems) {
-                return;
-            }
-
             if (cart.length === 0) {
-                cartItems.innerHTML = '<p style="text-align:center;padding:40px;color:rgba(255,255,255,0.35);font-family:Orbitron,sans-serif;font-size:12px;letter-spacing:2px;">Votre panier est vide</p>';
+                cartItems.innerHTML = '<p style="text-align:center;padding:20px;opacity:0.5;">Votre panier est vide</p>';
             } else {
                 cartItems.innerHTML = cart.map((item, index) => `
                     <div class="cart-item">
                         <div>
                             <div class="cart-item-title">${item.title}</div>
-                            <button class="btn-remove" type="button" onclick="removeFromCart(${index})">Supprimer</button>
+                            <button class="btn-remove" onclick="removeFromCart(${index})">Supprimer</button>
                         </div>
-                        <div class="cart-item-price">${formatPrice(item.price)}</div>
+                        <div class="cart-item-price">${item.price} FCFA</div>
                     </div>
                 `).join('');
             }
-
             modal.classList.add('open');
         }
 
@@ -1255,138 +925,52 @@ $platforms = array_values($platforms);
         }
 
         function removeFromCart(index) {
-            syncCart();
             cart.splice(index, 1);
             updateCart();
             openCart();
-            notify('L article a ete retire du panier.', 'warning', 'Panier mis a jour');
         }
 
-        function checkout() {
-            syncCart();
-            if (cart.length === 0) {
-                notify('Ajoute au moins un article avant de commander.', 'warning', 'Panier vide');
-                return;
-            }
+        // Filtrage dynamique
+        const searchInput = document.getElementById('searchInput');
+        const platformFilter = document.getElementById('platformFilter');
+        const priceFilter = document.getElementById('priceFilter');
+        const statusFilter = document.getElementById('statusFilter');
+        const articles = document.querySelectorAll('.article-card');
 
-            const rawPhone = (document.getElementById('payerPhoneNumber').value || '').replace(/\s/g, '');
-            if (!/^\d{9}$/.test(rawPhone)) {
-                notify('Entre un numero WhatsApp senegalais valide sur 9 chiffres. Exemple: 775072936.', 'warning', 'Numero invalide');
-                return;
-            }
+        function filterArticles() {
+            const search = searchInput.value.toLowerCase();
+            const platform = platformFilter.value.toLowerCase();
+            const priceRange = priceFilter.value;
+            const status = statusFilter.value;
+            let visibleCount = 0;
 
-            const button = document.querySelector('#cartModal .cta-button');
-            const originalText = button.textContent;
-            button.disabled = true;
-            button.textContent = 'Enregistrement...';
+            articles.forEach(card => {
+                const title = card.dataset.title;
+                const cardPlatform = card.dataset.platform;
+                const price = parseFloat(card.dataset.price);
+                const cardStatus = card.dataset.status;
 
-            const payload = [...cart, { payerPhoneNumber: rawPhone }];
-            fetch('checkout.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        cart = [];
-                        updateCart();
-                        closeCart();
-                        if (data.whatsappUrl) {
-                            window.open(data.whatsappUrl, '_blank');
-                        }
-                        notify(data.message || 'Commande enregistree. Consulte WhatsApp pour confirmer.', 'success', 'Commande envoyee');
-                        setTimeout(() => {
-                            window.location.href = 'order_history.php';
-                        }, 1200);
-                        return;
-                    }
+                let show = title.includes(search) && (platform === '' || cardPlatform === platform) && (status === '' || cardStatus === status);
 
-                    if (data.redirect_url) {
-                        notify(data.message || 'Complete ton profil avant de commander.', 'warning', 'Profil incomplet');
-                        setTimeout(() => {
-                            window.location.href = data.redirect_url;
-                        }, 1000);
-                        return;
-                    }
-
-                    notify(data.message || 'Une erreur est survenue pendant l enregistrement de la commande.', 'error', 'Commande echouee');
-                    button.disabled = false;
-                    button.textContent = originalText;
-                })
-                .catch(error => {
-                    console.error(error);
-                    notify('Une erreur technique est survenue. Reessaie dans un instant.', 'error', 'Erreur technique');
-                    button.disabled = false;
-                    button.textContent = originalText;
-                });
-        }
-
-        function applyFilters() {
-            const search = (document.getElementById('searchInput')?.value || '').trim().toLowerCase();
-            const platform = (document.getElementById('platformFilter')?.value || '').trim().toLowerCase();
-            const priceRange = document.getElementById('priceFilter')?.value || '';
-            const status = document.getElementById('statusFilter')?.value || '';
-            const sort = document.getElementById('sortSelect')?.value || 'recent';
-            const grid = document.getElementById('articlesGrid');
-            if (!grid) {
-                return;
-            }
-
-            const cards = Array.from(grid.querySelectorAll('.article-card'));
-            const [minPrice, maxPrice] = priceRange ? priceRange.split('-').map(Number) : [null, null];
-
-            const visibleCards = cards.filter(card => {
-                const title = card.dataset.title || '';
-                const cardPlatform = card.dataset.platform || '';
-                const price = Number(card.dataset.price || 0);
-                const cardStatus = card.dataset.status || '';
-                const matchesSearch = !search || title.includes(search);
-                const matchesPlatform = !platform || cardPlatform === platform;
-                const matchesPrice = !priceRange || (price >= minPrice && price <= maxPrice);
-                const matchesStatus = !status || cardStatus === status;
-                const visible = matchesSearch && matchesPlatform && matchesPrice && matchesStatus;
-                card.style.display = visible ? '' : 'none';
-                return visible;
-            });
-
-            visibleCards
-                .sort((a, b) => {
-                    if (sort === 'price-asc') return Number(a.dataset.price) - Number(b.dataset.price);
-                    if (sort === 'price-desc') return Number(b.dataset.price) - Number(a.dataset.price);
-                    if (sort === 'title-asc') return (a.dataset.title || '').localeCompare(b.dataset.title || '', 'fr');
-                    return Number(b.dataset.created) - Number(a.dataset.created);
-                })
-                .forEach(card => grid.appendChild(card));
-
-            const resultsCount = document.getElementById('resultsCount');
-            const noResults = document.getElementById('noResults');
-            if (resultsCount) {
-                resultsCount.textContent = `${visibleCards.length} article(s) affiches`;
-            }
-            if (noResults) {
-                noResults.classList.toggle('open', visibleCards.length === 0);
-            }
-        }
-
-        document.getElementById('cartModal').addEventListener('click', function (event) {
-            if (event.target === this) {
-                closeCart();
-            }
-        });
-
-        document.addEventListener('DOMContentLoaded', function () {
-            updateCart();
-            ['searchInput', 'platformFilter', 'priceFilter', 'statusFilter', 'sortSelect'].forEach(id => {
-                const element = document.getElementById(id);
-                if (!element) {
-                    return;
+                if (show && priceRange !== '') {
+                    const [min, max] = priceRange.split('-').map(parseFloat);
+                    show = price >= min && price <= max;
                 }
-                element.addEventListener(id === 'searchInput' ? 'input' : 'change', applyFilters);
+
+                card.style.display = show ? 'flex' : 'none';
+                if (show) visibleCount++;
             });
-            applyFilters();
+
+            document.getElementById('noResults').style.display = visibleCount === 0 ? 'block' : 'none';
+            document.getElementById('resultsCount').textContent = `${visibleCount} article(s) trouvé(s)`;
+        }
+
+        [searchInput, platformFilter, priceFilter, statusFilter].forEach(el => {
+            if (el) el.addEventListener('input', filterArticles);
         });
+
+        filterArticles();
+        updateCart();
     </script>
-    <script src="style/article_lightbox.js"></script>
 </body>
 </html>

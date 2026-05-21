@@ -5,7 +5,7 @@ $conn = db();
 // Traitement POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($_POST['username']) || empty($_POST['password'])) {
-        redirect('/index.php?error=empty');
+        redirect('/connexion.php?error=empty');
     }
 
     $username = trim($_POST['username']);
@@ -29,11 +29,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         redirect('/accueil.php');
     } else {
-        redirect('/index.php?error=login');
+        redirect('/connexion.php?error=login');
     }
 
 } else {
-    redirect('/index.php');
+    redirect('/connexion.php');
 }
 
 ?>
