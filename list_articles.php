@@ -858,6 +858,7 @@ $platforms = array_values($platforms);
     </div>
 
     <script src="style/article_lightbox.js"></script>
+    <script src="style/cart.js"></script>
     <script>
         (function () {
             const container = document.getElementById('particles');
@@ -871,14 +872,6 @@ $platforms = array_values($platforms);
                 }
             }
         })();
-
-        let cart = JSON.parse(localStorage.getItem('efootball_cart') || '[]');
-
-        function updateCart() {
-            localStorage.setItem('efootball_cart', JSON.stringify(cart));
-            const count = document.getElementById('cartCount');
-            if (count) count.textContent = cart.length;
-        }
 
         function notify(message, type = 'success') {
             const notification = document.createElement('div');
@@ -904,35 +897,6 @@ $platforms = array_values($platforms);
                     notify(data.message);
                 }
             });
-        }
-
-        function openCart() {
-            const modal = document.getElementById('cartModal');
-            const cartItems = document.getElementById('cartItems');
-            if (cart.length === 0) {
-                cartItems.innerHTML = '<p style="text-align:center;padding:20px;opacity:0.5;">Votre panier est vide</p>';
-            } else {
-                cartItems.innerHTML = cart.map((item, index) => `
-                    <div class="cart-item">
-                        <div>
-                            <div class="cart-item-title">${item.title}</div>
-                            <button class="btn-remove" onclick="removeFromCart(${index})">Supprimer</button>
-                        </div>
-                        <div class="cart-item-price">${item.price} FCFA</div>
-                    </div>
-                `).join('');
-            }
-            modal.classList.add('open');
-        }
-
-        function closeCart() {
-            document.getElementById('cartModal').classList.remove('open');
-        }
-
-        function removeFromCart(index) {
-            cart.splice(index, 1);
-            updateCart();
-            openCart();
         }
 
         // Filtrage dynamique
@@ -975,7 +939,6 @@ $platforms = array_values($platforms);
         });
 
         filterArticles();
-        updateCart();
     </script>
 </body>
 </html>

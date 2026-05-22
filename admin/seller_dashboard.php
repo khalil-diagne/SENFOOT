@@ -10,9 +10,9 @@ try {
     // Nombre d'articles
     $stmt = $pdo->prepare("
         SELECT COUNT(*) as total_articles,
-               SUM(CASE WHEN binding_status = 'available' THEN 1 ELSE 0 END) as available,
-               SUM(CASE WHEN binding_status = 'reserved' THEN 1 ELSE 0 END) as reserved,
-               SUM(CASE WHEN binding_status = 'sold' THEN 1 ELSE 0 END) as sold
+               SUM(CASE WHEN product_status = 'available' THEN 1 ELSE 0 END) as available,
+               SUM(CASE WHEN product_status = 'reserved' THEN 1 ELSE 0 END) as reserved,
+               SUM(CASE WHEN product_status = 'sold' THEN 1 ELSE 0 END) as sold
         FROM articles
         WHERE author_user_id = :user_id
     ");
@@ -33,7 +33,7 @@ try {
 
     // Articles récents
     $stmt = $pdo->prepare("
-        SELECT id, title, price, binding_status, approval_status, created_at
+        SELECT id, title, price, product_status, approval_status, created_at
         FROM articles
         WHERE author_user_id = :user_id
         ORDER BY created_at DESC
@@ -456,8 +456,9 @@ $profile = current_user_profile();
                                         <td><?= htmlspecialchars(substr($article['title'], 0, 40)) ?></td>
                                         <td><?= number_format($article['price'], 0, ',', ' ') ?> FCFA</td>
                                         <td>
-                                            <span class="status-badge status-<?= htmlspecialchars($article['binding_status'] ?? 'available') ?>">
-                                                <?= htmlspecialchars(ucfirst($article['binding_status'] ?? 'available')) ?>
+                                            <?php $stockMeta = article_status_meta($article['product_status'] ?? null); ?>
+                                            <span class="status-badge status-<?= htmlspecialchars($stockMeta['value']) ?>">
+                                                <?= htmlspecialchars($stockMeta['label']) ?>
                                             </span>
                                         </td>
                                         <td>

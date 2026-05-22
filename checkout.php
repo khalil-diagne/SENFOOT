@@ -80,7 +80,11 @@ try {
     $uniqueArticleIds = array_keys($articleQuantities);
     $placeholders = implode(',', array_fill(0, count($uniqueArticleIds), '?'));
 
-    $stmtCheck = $pdo->prepare("SELECT id, price, title, product_status FROM articles WHERE id IN ($placeholders)");
+    $stmtCheck = $pdo->prepare(
+        "SELECT id, price, title, product_status FROM articles
+         WHERE id IN ($placeholders)
+         AND (approval_status = 'approved' OR approval_status IS NULL OR author_username IS NULL)",
+    );
     $stmtCheck->execute($uniqueArticleIds);
     $dbArticles = $stmtCheck->fetchAll(PDO::FETCH_ASSOC);
 

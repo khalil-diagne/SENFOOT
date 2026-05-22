@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_id'])) {
 // Récupérer les articles du vendeur
 try {
     $stmt = $pdo->prepare("
-        SELECT id, title, price, binding_status, approval_status, created_at, gallery_images
+        SELECT id, title, price, product_status, binding_status, approval_status, created_at, gallery_images, image
         FROM articles
         WHERE author_user_id = :user_id
         ORDER BY created_at DESC
@@ -411,9 +411,15 @@ $profile = current_user_profile();
                             <div class="product-image">
                                 <?php
                                 $images = !empty($article['gallery_images']) ? json_decode($article['gallery_images'], true) : [];
-                                if (!empty($images) && !empty($images[0])):
+                                $thumb = '';
+                                if (is_array($images) && !empty($images[0])) {
+                                    $thumb = (string) $images[0];
+                                } elseif (!empty($article['image'])) {
+                                    $thumb = (string) $article['image'];
+                                }
+                                if ($thumb !== ''):
                                 ?>
-                                    <img src="<?= htmlspecialchars($images[0]) ?>" alt="<?= htmlspecialchars($article['title']) ?>">
+                                    <img src="../uploads/articles/<?= htmlspecialchars(rawurlencode($thumb)) ?>" alt="<?= htmlspecialchars($article['title']) ?>">
                                 <?php else: ?>
                                     📦
                                 <?php endif; ?>
@@ -424,8 +430,9 @@ $profile = current_user_profile();
                                 <div class="product-price"><?= number_format($article['price'], 0, ',', ' ') ?> FCFA</div>
 
                                 <div class="product-meta">
-                                    <span class="badge badge-<?= htmlspecialchars($article['binding_status'] ?? 'available') ?>">
-                                        <?= htmlspecialchars(ucfirst($article['binding_status'] ?? 'available')) ?>
+                                    <?php $stockMeta = article_status_meta($article['product_status'] ?? null); ?>
+                                    <span class="badge badge-<?= htmlspecialchars($stockMeta['value']) ?>">
+                                        <?= htmlspecialchars($stockMeta['label']) ?>
                                     </span>
                                     <span class="badge badge-<?= ($article['approval_status'] === 'approved' ? 'available' : 'pending') ?>">
                                         <?= htmlspecialchars(ucfirst($article['approval_status'] ?? 'pending')) ?>

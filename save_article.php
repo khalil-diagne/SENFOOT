@@ -46,54 +46,6 @@ function uploadedImageCount(array $files): int
     return $count;
 }
 
-function storeUploadedImages(array $files, string $destDir): array
-{
-    $allowed = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/gif' => 'gif'];
-    $stored = [];
-
-    if (!isset($files['error']) || !is_array($files['error'])) {
-        return $stored;
-    }
-
-    foreach ($files['error'] as $index => $error) {
-        if ($error === UPLOAD_ERR_NO_FILE) {
-            continue;
-        }
-
-        if ($error !== UPLOAD_ERR_OK) {
-            throw new RuntimeException('Erreur upload image');
-        }
-
-        $tmpName = $files['tmp_name'][$index] ?? '';
-        $size = (int) ($files['size'][$index] ?? 0);
-        if ($tmpName === '' || !is_uploaded_file($tmpName)) {
-            throw new RuntimeException('Fichier image invalide');
-        }
-
-        $finfo = finfo_open(FILEINFO_MIME_TYPE);
-        $mime = finfo_file($finfo, $tmpName);
-        finfo_close($finfo);
-
-        if (!isset($allowed[$mime])) {
-            throw new RuntimeException('Type de fichier non autorisé');
-        }
-
-        if ($size > 2 * 1024 * 1024) {
-            throw new RuntimeException('Fichier trop volumineux (max 2MB)');
-        }
-
-        $fileName = bin2hex(random_bytes(8)) . '.' . $allowed[$mime];
-        $destPath = $destDir . DIRECTORY_SEPARATOR . $fileName;
-        if (!move_uploaded_file($tmpName, $destPath)) {
-            throw new RuntimeException('Impossible de déplacer le fichier');
-        }
-
-        $stored[] = $fileName;
-    }
-
-    return $stored;
-}
-
 $title = trim($_POST['title'] ?? '');
 $content = trim($_POST['content'] ?? '');
 $price = filter_var($_POST['price'] ?? 0, FILTER_VALIDATE_FLOAT);
@@ -104,16 +56,8 @@ $productStatus = article_status_meta($_POST['product_status'] ?? 'available')['v
 $articleId = isset($_POST['article_id']) ? (int) $_POST['article_id'] : 0;
 $isEdit = $articleId > 0;
 
-// Statut d'approbation : 'approved' pour admin, 'pending' pour vendeur
-$approvalStatus = ($role === 'admin') ? 'approved' : 'pending';
-
 if ($title === '' || $content === '' || $price === false || $price < 0) {
     die('Titre, contenu et prix valides sont requis');
-}
-
-$destDir = __DIR__ . '/uploads/articles';
-if (!is_dir($destDir)) {
-    mkdir($destDir, 0755, true);
 }
 
 try {
@@ -122,7 +66,7 @@ try {
     $currentImage = null;
     $currentGallery = [];
     if ($isEdit) {
-        $stmtCurrent = $pdo->prepare('SELECT image, gallery_images, author_username, author_user_id FROM articles WHERE id = :id LIMIT 1');
+        $stmtCurrent = $pdo->prepare('SELECT image, gallery_images, author_username, author_user_id, approval_status FROM articles WHERE id = :id LIMIT 1');
         $stmtCurrent->execute([':id' => $articleId]);
         $currentArticle = $stmtCurrent->fetch(PDO::FETCH_ASSOC);
         if (!$currentArticle) {
@@ -144,11 +88,21 @@ try {
         }
     }
 
-    $uploadedImages = storeUploadedImages($_FILES['images'] ?? [], $destDir);
+    $uploadResult = store_article_uploaded_images($_FILES['images'] ?? []);
+    $uploadedImages = $uploadResult['stored'];
+    $uploadErrors = $uploadResult['errors'];
     $uploadedCount = count($uploadedImages);
 
+    if ($uploadErrors !== []) {
+        $errorSummary = implode(' | ', $uploadErrors);
+        if ($uploadedCount < 1) {
+            throw new RuntimeException($errorSummary);
+        }
+        $_SESSION['article_upload_warnings'] = $errorSummary;
+    }
+
     if (!$isEdit && $uploadedCount < 1) {
-        throw new RuntimeException('Ajoutez au moins 1 photo pour chaque article.');
+        throw new RuntimeException('Ajoutez au moins 1 photo pour chaque article (JPG, PNG, GIF ou WEBP, max 5 Mo).');
     }
 
     $galleryImages = $isEdit
@@ -184,6 +138,15 @@ try {
     }
 
     $galleryJson = json_encode($galleryImages, JSON_UNESCAPED_UNICODE);
+
+    if ($isEdit) {
+        $currentApproval = (string) ($currentArticle['approval_status'] ?? 'pending');
+        $approvalStatus = $role === 'admin'
+            ? 'approved'
+            : (in_array($currentApproval, ['approved', 'pending', 'rejected'], true) ? $currentApproval : 'pending');
+    } else {
+        $approvalStatus = $role === 'admin' ? 'approved' : 'pending';
+    }
 
     if ($isEdit) {
         $stmt = $pdo->prepare('UPDATE articles SET title = :t, slug = :s, content = :c, price = :p, platform = :platform, delivery_time = :delivery_time, binding_status = :binding_status, product_status = :product_status, image = :img, gallery_images = :gallery, approval_status = :approval, seller_note = NULL WHERE id = :id');
@@ -224,7 +187,7 @@ try {
     if ($role === 'admin') {
         redirect('/admin/articles.php');
     } else {
-        redirect('/accueil.php?article_submitted=1');
+        redirect('/seller/my_articles.php?success=1');
     }
 } catch (RuntimeException $e) {
     die($e->getMessage());

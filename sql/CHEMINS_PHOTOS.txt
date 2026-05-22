@@ -1,0 +1,104 @@
+================================================================================
+DRIBBLEUR STORE — Chemins des photos (base efootball)
+================================================================================
+Date export : 2026-05-21
+
+IMPORTANT
+---------
+- En base SQL, on stocke seulement le NOM du fichier (ex: 6c57d36bddb77ded.jpg).
+- Les fichiers physiques sont sur le serveur, dans le dossier uploads/ du site.
+- Après import du SQL, copiez tout le dossier uploads/ sur votre hébergeur.
+
+Racine du site (exemple local XAMPP)
+------------------------------------
+  c:\xampp\htdocs\dribbleur\htdocs\
+
+Dossiers images
+---------------
+  uploads/articles/     → photos des articles (boutique)
+  uploads/avatars/      → photos de profil utilisateurs
+  uploads/kyc/          → pièces d'identité vendeurs (KYC)
+
+URL affichées dans le site (chemin web relatif)
+-----------------------------------------------
+  uploads/articles/NOM_FICHIER.jpg
+  uploads/avatars/NOM_FICHIER.jpg
+  uploads/kyc/NOM_FICHIER.jpg
+
+Exemple URL complète en local :
+  http://localhost/dribbleur/htdocs/uploads/articles/6c57d36bddb77ded.jpg
+
+Exemple URL complète en production :
+  https://VOTRE-DOMAINE.com/uploads/articles/6c57d36bddb77ded.jpg
+  (adapter si le site est dans un sous-dossier)
+
+================================================================================
+ARTICLES (table `articles`)
+================================================================================
+Colonne `image`        → image principale (1 fichier)
+Colonne `gallery_images` → JSON tableau de noms de fichiers (galerie)
+
+ID  | Titre            | Fichier principal              | Galerie
+----|------------------|--------------------------------|------------------------------------------
+ 3  | PUISSANCE 3160   | uploads/articles/6c57d36bddb77ded.jpg
+ 4  | PUISSANCE 3220   | uploads/articles/d15d49d8c5af18fc.jpg
+ 5  | PUISSANCE 3178   | uploads/articles/f24f12c4efe44be6.jpg
+ 6  | PUISSANCE 3197   | uploads/articles/b04c56310c1fb86c.jpg
+    |                  |                                | uploads/articles/b04c56310c1fb86c.jpg
+    |                  |                                | uploads/articles/dbdd576ed37b8c73.jpg
+
+================================================================================
+UTILISATEURS (table `visiteur`)
+================================================================================
+Colonne `avatar`         → uploads/avatars/NOM_FICHIER
+Colonne `seller_id_photo` → uploads/kyc/NOM_FICHIER (vendeurs)
+
+ID | Username        | Avatar                                      | KYC
+---|-----------------|---------------------------------------------|-----------------------------
+ 2 | khalil11        | uploads/avatars/96ca37ff662e1eaf6947f76c.jpg
+ 3 | khalil13        |                                             | uploads/kyc/kyc_3_1778585256.jpg
+ 4 | moustapha2025   | uploads/avatars/fe79ad933f7a6e65c1d5da16.jpg
+ 5 | khalildiagne10  | uploads/avatars/2ece4d8042e7b1e20767fef3.jpg
+ 6 | Papediagne1234  | (aucune)
+ 7 | Papediagne10    | (aucune)
+ 8 | Papediagne123   | (aucune)
+ 9 | Bass10          | (aucune)
+
+================================================================================
+FICHIERS présents sur le disque (uploads/)
+================================================================================
+Articles :
+  uploads/articles/020250b3e1e0c2b7.jpg
+  uploads/articles/0489dc2cb9197a11.jpg
+  uploads/articles/25ceed1ff5803001.jpg
+  uploads/articles/5afe8dc22c545641.jpg
+  uploads/articles/6c57d36bddb77ded.jpg      ← article #3
+  uploads/articles/74a696ab054217bc.jpg
+  uploads/articles/b04c56310c1fb86c.jpg      ← article #6 (principal)
+  uploads/articles/bba31f3659e57186.jpg
+  uploads/articles/bbcb2e54662e4d34.jpg
+  uploads/articles/c37cbfd60ce7ae77.jpg
+  uploads/articles/d15d49d8c5af18fc.jpg      ← article #4
+  uploads/articles/dbdd576ed37b8c73.jpg      ← article #6 (galerie)
+  uploads/articles/dd4cd0fa4546fa95.jpg
+  uploads/articles/f24f12c4efe44be6.jpg      ← article #5
+
+Avatars :
+  uploads/avatars/2ece4d8042e7b1e20767fef3.jpg   ← khalildiagne10
+  uploads/avatars/96ca37ff662e1eaf6947f76c.jpg   ← khalil11
+  uploads/avatars/avatar_Khalildiagne107_1767112685.jpg
+  uploads/avatars/avatar_khalildiagne10_1767112169.jpeg
+  uploads/avatars/fe79ad933f7a6e65c1d5da16.jpg   ← moustapha2025
+
+KYC :
+  uploads/kyc/kyc_3_1778585256.jpg               ← khalil13 (vendeur)
+
+================================================================================
+DÉPLOIEMENT (SQL + photos)
+================================================================================
+1. Importer : sql/efootball_complet.sql
+2. Copier via FTP le dossier entier : htdocs/uploads/
+   (conserver les sous-dossiers articles/, avatars/, kyc/)
+3. Vérifier les droits : dossiers en 755, fichiers en 644
+
+================================================================================

@@ -847,7 +847,7 @@ $isSellerOnly = ($_SESSION['role'] ?? null) === 'seller';
                         <div class="form-group full">
                             <label for="images">Photos de l article (Max 6)</label>
                             <div class="upload-box">
-                                <input class="form-control" type="file" id="images" name="images[]" accept="image/jpeg,image/png,image/gif" multiple style="display: none;">
+                                <input class="form-control" type="file" id="images" name="images[]" accept="image/jpeg,image/png,image/gif,image/webp" multiple style="display: none;">
                                 <button type="button" class="admin-btn-secondary" onclick="document.getElementById('images').click()" style="width: 100%; margin-bottom: 10px;">
                                     <span>📁 Sélectionner des photos</span>
                                 </button>
@@ -880,17 +880,41 @@ $isSellerOnly = ($_SESSION['role'] ?? null) === 'seller';
         let selectedFiles = [];
         const MAX_IMAGES = 6;
 
+        const MAX_FILE_BYTES = 5 * 1024 * 1024;
+        const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+
         imagesInput.addEventListener('change', function () {
             const newFiles = Array.from(imagesInput.files || []);
-            
-            if (selectedFiles.length + newFiles.length > MAX_IMAGES) {
+            const rejected = [];
+
+            const validFiles = newFiles.filter(function (file) {
+                if (!ALLOWED_TYPES.includes(file.type)) {
+                    rejected.push(file.name + ' (format non autorise)');
+                    return false;
+                }
+                if (file.size > MAX_FILE_BYTES) {
+                    rejected.push(file.name + ' (plus de 5 Mo)');
+                    return false;
+                }
+                return true;
+            });
+
+            if (rejected.length > 0) {
+                alert('Fichiers ignores :\n- ' + rejected.join('\n- '));
+            }
+
+            if (validFiles.length === 0) {
+                imagesInput.value = '';
+                return;
+            }
+
+            if (selectedFiles.length + validFiles.length > MAX_IMAGES) {
                 alert(`Vous ne pouvez pas ajouter plus de ${MAX_IMAGES} photos.`);
                 imagesInput.value = '';
                 return;
             }
 
-            // Ajouter les nouveaux fichiers à notre liste
-            selectedFiles = [...selectedFiles, ...newFiles];
+            selectedFiles = [...selectedFiles, ...validFiles];
             updatePreview();
             
             // Réinitialiser l'input pour permettre de re-sélectionner le même fichier si besoin
@@ -988,11 +1012,28 @@ $isSellerOnly = ($_SESSION['role'] ?? null) === 'seller';
         }
 
         function submitForm() {
-            // Créer un DataTransfer pour injecter nos fichiers stockés dans le formulaire
-            const dataTransfer = new DataTransfer();
-            selectedFiles.forEach(file => dataTransfer.items.add(file));
-            imagesInput.files = dataTransfer.files;
-            
+            if (selectedFiles.length === 0) {
+                alert('Veuillez selectionner au moins une photo');
+                return;
+            }
+
+            articleForm.querySelectorAll('input[data-dynamic-upload]').forEach(function (el) {
+                el.remove();
+            });
+            imagesInput.removeAttribute('name');
+
+            selectedFiles.forEach(function (file) {
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.name = 'images[]';
+                input.hidden = true;
+                input.setAttribute('data-dynamic-upload', '1');
+                const dt = new DataTransfer();
+                dt.items.add(file);
+                input.files = dt.files;
+                articleForm.appendChild(input);
+            });
+
             articleForm.submit();
         }
 

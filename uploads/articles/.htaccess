@@ -1,0 +1,4 @@
+# Autoriser l'affichage des images uniquement
+<FilesMatch "\.(?i:jpe?g|png|gif|webp)$">
+    Require all granted
+</FilesMatch>

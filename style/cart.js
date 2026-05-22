@@ -146,6 +146,9 @@ async function checkout() {
                 cart = [];
                 updateCart();
                 closeCart();
+                if (data.whatsappUrl) {
+                    window.open(data.whatsappUrl, '_blank', 'noopener');
+                }
                 alert(data.message || 'Commande enregistree avec succes !');
                 setTimeout(() => { window.location.href = 'order_history.php'; }, 2000);
                 return;

@@ -23,7 +23,7 @@ if (session_status() === PHP_SESSION_NONE) {
 if (!defined("BASE_URL")) {
     // Remonte d'un niveau si on est dans un sous-dossier /admin/
     $scriptDir = dirname($_SERVER["SCRIPT_NAME"]);
-    if (basename($scriptDir) === "admin") {
+    while (in_array(basename($scriptDir), ["admin", "seller"], true)) {
         $scriptDir = dirname($scriptDir);
     }
     define("BASE_URL", rtrim($scriptDir, "/"));
@@ -434,4 +434,150 @@ function require_post(): void
         http_response_code(405);
         exit("Methode non autorisee");
     }
+}
+
+/** Dossier uploads/articles (chemin absolu, créé si besoin). */
+function articles_upload_dir(): string
+{
+    $dir = __DIR__ . DIRECTORY_SEPARATOR . "uploads" . DIRECTORY_SEPARATOR . "articles";
+
+    if (!is_dir($dir) && !mkdir($dir, 0775, true) && !is_dir($dir)) {
+        throw new RuntimeException(
+            "Impossible de creer le dossier uploads/articles. Verifiez les droits d ecriture sur le serveur.",
+        );
+    }
+
+    if (!is_writable($dir)) {
+        @chmod($dir, 0775);
+    }
+
+    if (!is_writable($dir)) {
+        throw new RuntimeException(
+            "Le dossier uploads/articles n est pas accessible en ecriture. Ajustez les permissions (chmod 775) ou contactez l hebergeur.",
+        );
+    }
+
+    return $dir;
+}
+
+function upload_error_label(int $code): string
+{
+    return match ($code) {
+        UPLOAD_ERR_INI_SIZE => "Fichier trop volumineux (limite PHP upload_max_filesize).",
+        UPLOAD_ERR_FORM_SIZE => "Fichier trop volumineux (limite du formulaire).",
+        UPLOAD_ERR_PARTIAL => "Transfert interrompu, reessayez.",
+        UPLOAD_ERR_NO_FILE => "Aucun fichier recu.",
+        UPLOAD_ERR_NO_TMP_DIR => "Dossier temporaire manquant sur le serveur.",
+        UPLOAD_ERR_CANT_WRITE => "Impossible d ecrire le fichier sur le disque.",
+        UPLOAD_ERR_EXTENSION => "Extension bloquee par la configuration PHP.",
+        default => "Erreur upload (code " . $code . ").",
+    };
+}
+
+function detect_upload_image_mime(string $tmpPath): ?string
+{
+    $mime = null;
+
+    if (function_exists("finfo_open")) {
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        if ($finfo !== false) {
+            $mime = finfo_file($finfo, $tmpPath) ?: null;
+            finfo_close($finfo);
+        }
+    }
+
+    if ($mime === null && function_exists("mime_content_type")) {
+        $mime = mime_content_type($tmpPath) ?: null;
+    }
+
+    return is_string($mime) ? strtolower($mime) : null;
+}
+
+/**
+ * Enregistre les images article. Continue si une image echoue ; remonte les erreurs regroupees.
+ *
+ * @return array{stored: string[], errors: string[]}
+ */
+function store_article_uploaded_images(array $files, ?string $destDir = null, int $maxBytes = 5242880): array
+{
+    $destDir = $destDir ?? articles_upload_dir();
+    $destDir = rtrim($destDir, "/\\");
+
+    $allowed = [
+        "image/jpeg" => "jpg",
+        "image/png" => "png",
+        "image/gif" => "gif",
+        "image/webp" => "webp",
+    ];
+
+    $stored = [];
+    $errors = [];
+
+    if (!isset($files["error"]) || !is_array($files["error"])) {
+        return ["stored" => $stored, "errors" => $errors];
+    }
+
+    foreach ($files["error"] as $index => $error) {
+        $error = (int) $error;
+        $label = (string) ($files["name"][$index] ?? ("Image " . ((int) $index + 1)));
+
+        if ($error === UPLOAD_ERR_NO_FILE) {
+            continue;
+        }
+
+        if ($error !== UPLOAD_ERR_OK) {
+            $errors[] = $label . " : " . upload_error_label($error);
+            continue;
+        }
+
+        $tmpName = (string) ($files["tmp_name"][$index] ?? "");
+        $size = (int) ($files["size"][$index] ?? 0);
+
+        if ($tmpName === "" || !is_uploaded_file($tmpName)) {
+            $errors[] = $label . " : fichier invalide ou deja traite.";
+            continue;
+        }
+
+        $mime = detect_upload_image_mime($tmpName);
+        if ($mime === null || !isset($allowed[$mime])) {
+            $errors[] =
+                $label .
+                " : format non autorise (JPG, PNG, GIF ou WEBP uniquement).";
+            continue;
+        }
+
+        if ($size <= 0) {
+            $errors[] = $label . " : fichier vide.";
+            continue;
+        }
+
+        if ($size > $maxBytes) {
+            $maxMo = round($maxBytes / 1048576, 1);
+            $errors[] = $label . " : trop volumineux (max " . $maxMo . " Mo).";
+            continue;
+        }
+
+        $fileName = bin2hex(random_bytes(8)) . "." . $allowed[$mime];
+        $destPath = $destDir . DIRECTORY_SEPARATOR . $fileName;
+
+        if (!move_uploaded_file($tmpName, $destPath)) {
+            $detail = is_writable($destDir)
+                ? "verifiez l espace disque et les droits du dossier uploads/articles."
+                : "le dossier uploads/articles n est pas inscriptible.";
+            $errors[] = $label . " : impossible de deplacer le fichier (" . $detail . ")";
+            error_log(
+                "move_uploaded_file failed: " .
+                    $tmpName .
+                    " -> " .
+                    $destPath .
+                    " | writable=" .
+                    (is_writable($destDir) ? "yes" : "no"),
+            );
+            continue;
+        }
+
+        $stored[] = $fileName;
+    }
+
+    return ["stored" => $stored, "errors" => $errors];
 }

@@ -113,7 +113,7 @@ if (empty($galleryImages) && !empty($article['image'])) {
 
                 <div class="form-group">
                     <label for="images">Ajouter d autres photos</label>
-                    <input type="file" id="images" name="images[]" accept="image/jpeg,image/png,image/gif" multiple>
+                    <input type="file" id="images" name="images[]" accept="image/jpeg,image/png,image/gif,image/webp" multiple>
                     <p style="margin-top:8px;color:#666;font-size:13px;">Les nouvelles photos seront ajoutees aux photos actuelles. Laissez vide si vous ne voulez rien ajouter.</p>
                 </div>
 

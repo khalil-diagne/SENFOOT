@@ -102,7 +102,7 @@ $username = $_SESSION['username'];
                 Si approuvé ✅, il sera visible sur la boutique. Si refusé ❌, vous recevrez un email expliquant le motif.
             </div>
 
-            <form action="save_article.php" method="POST" enctype="multipart/form-data" id="articleForm">
+            <form action="../save_article.php" method="POST" enctype="multipart/form-data" id="articleForm">
                 <input type="hidden" name="csrf_token" value="<?= csrf_token() ?>">
                 <div class="form-card">
                     <div class="form-grid">

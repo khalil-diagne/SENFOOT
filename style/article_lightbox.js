@@ -15,7 +15,11 @@ class ArticleLightbox {
         this.currentArticleFavorite = false;
 
         const path = window.location.pathname;
-        this.baseUrl = path.includes('/admin/') ? '../' : '';
+        if (path.includes('/admin/') || path.includes('/seller/')) {
+            this.baseUrl = '../';
+        } else {
+            this.baseUrl = '';
+        }
 
         this.init();
     }

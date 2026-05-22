@@ -9,22 +9,23 @@ $userId = current_user_id();
 try {
     $stmt = $pdo->prepare("
         SELECT DISTINCT
-            o.id as order_id,
-            o.customer_name,
-            o.customer_email,
-            o.address,
-            o.city,
-            o.phone,
-            o.created_at,
+            o.id AS order_id,
+            TRIM(CONCAT(COALESCE(v.prenom, ''), ' ', COALESCE(v.nom, ''))) AS customer_name,
+            COALESCE(v.email, '') AS customer_email,
+            COALESCE(v.adresse, '') AS address,
+            COALESCE(v.ville, '') AS city,
+            COALESCE(v.telephone, '') AS phone,
+            o.order_date AS created_at,
             o.total_price,
-            COUNT(oi.id) as item_count,
-            SUM(oi.quantity) as total_quantity
+            COUNT(oi.id) AS item_count,
+            SUM(oi.quantity) AS total_quantity
         FROM orders o
+        JOIN visiteur v ON v.id = o.user_id
         JOIN order_items oi ON o.id = oi.order_id
         JOIN articles a ON oi.article_id = a.id
         WHERE a.author_user_id = :user_id
-        GROUP BY o.id
-        ORDER BY o.created_at DESC
+        GROUP BY o.id, v.prenom, v.nom, v.email, v.adresse, v.ville, v.telephone, o.order_date, o.total_price
+        ORDER BY o.order_date DESC
     ");
     $stmt->execute([':user_id' => $userId]);
     $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);

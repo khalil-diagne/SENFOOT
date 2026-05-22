@@ -4,7 +4,7 @@
  * Exécutez ce fichier une seule fois pour ajouter les exemples de données
  * Accès: /admin/ uniquement ou pas du tout après
  */
-require __DIR__ . '/config.php';
+require __DIR__ . '/../config.php';
 
 // Vérifier l'accès administrateur
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
